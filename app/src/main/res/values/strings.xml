@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ElectroDZ Chantier</string>
+    <string name="disclaimer">Résultats indicatifs — vérifier selon C 15-100 / IEC 60364 avant toute installation.</string>
+</resources>
