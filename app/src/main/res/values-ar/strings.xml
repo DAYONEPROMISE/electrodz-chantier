@@ -31,6 +31,8 @@
     <string name="wilaya">الولاية</string>
     <string name="add">إضافة</string>
     <string name="cancel">إلغاء</string>
+    <string name="delete">حذف</string>
+    <string name="share">مشاركة</string>
     <string name="new_fiche">بطاقة جديدة</string>
     <string name="client">الزبون</string>
     <string name="date">التاريخ</string>

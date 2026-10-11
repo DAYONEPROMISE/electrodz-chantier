@@ -97,7 +97,7 @@ fun CalculatorScreen(vm: AppViewModel) {
                 )
                 result = ElectroEngine.sizeCable(input)
             } catch (e: Exception) {
-                error = "Valeurs invalides: ${e.message}"
+                error = stringResource(R.string.err_invalid, e.message ?: "")
             }
         }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.calc_btn)) }
         result?.let { r ->
@@ -132,5 +132,122 @@ fun CalculatorScreen(vm: AppViewModel) {
             }
         }
         Text(stringResource(R.string.disclaimer), style = MaterialTheme.typography.bodySmall)
+    }
+}
+
+@Composable
+fun ClientsScreen(vm: AppViewModel) {
+    val clients by vm.clients.collectAsState()
+    var show by remember { mutableStateOf(false) }
+    Scaffold(floatingActionButton = {
+        FloatingActionButton(onClick = { show = true }) { Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add)) }
+    }) { pad ->
+        LazyColumn(Modifier.fillMaxSize().padding(pad).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(clients, key = { it.id }) { c ->
+                Card(Modifier.fillMaxWidth()) {
+                    Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Column { Text(c.name, style = MaterialTheme.typography.titleMedium); Text("${c.phone} \u00b7 ${c.wilaya}") }
+                        IconButton(onClick = { vm.deleteClient(c) }) { Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete)) }
+                    }
+                }
+            }
+        }
+    }
+    if (show) {
+        var name by remember { mutableStateOf("") }
+        var phone by remember { mutableStateOf("") }
+        var wilaya by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { show = false }, title = { Text(stringResource(R.string.new_client)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.name)) })
+                    OutlinedTextField(phone, { phone = it }, label = { Text(stringResource(R.string.phone)) })
+                    OutlinedTextField(wilaya, { wilaya = it }, label = { Text(stringResource(R.string.wilaya)) })
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    if (name.isNotBlank()) { vm.addClient(Client(name = name, phone = phone, wilaya = wilaya)); show = false }
+                }) { Text(stringResource(R.string.add)) }
+            },
+            dismissButton = { TextButton(onClick = { show = false }) { Text(stringResource(R.string.cancel)) } }
+        )
+    }
+}
+
+@Composable
+fun FichesScreen(vm: AppViewModel) {
+    val fiches by vm.fiches.collectAsState()
+    val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var show by remember { mutableStateOf(false) }
+    Scaffold(floatingActionButton = {
+        FloatingActionButton(onClick = { show = true }) { Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add)) }
+    }) { pad ->
+        LazyColumn(Modifier.fillMaxSize().padding(pad).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(fiches, key = { it.id }) { f ->
+                Card(Modifier.fillMaxWidth()) {
+                    Column(Modifier.padding(12.dp)) {
+                        Text(f.clientName.ifBlank { stringResource(R.string.no_client) }, style = MaterialTheme.typography.titleMedium)
+                        Text("${f.date} \u00b7 ${f.wilaya}")
+                        if (f.description.isNotBlank()) Text(f.description)
+                        Row {
+                            IconButton(onClick = {
+                                scope.launch {
+                                    val calc = if (f.calcId > 0) vm.calcById(f.calcId) else null
+                                    try { PdfExport.shareFiche(ctx, f, calc) } catch (_: Exception) { }
+                                }
+                            }) { Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.share)) }
+                            IconButton(onClick = { vm.deleteFiche(f) }) { Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete)) }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (show) {
+        var client by remember { mutableStateOf("") }
+        var date by remember { mutableStateOf("") }
+        var site by remember { mutableStateOf("") }
+        var wilaya by remember { mutableStateOf("") }
+        var desc by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { show = false }, title = { Text(stringResource(R.string.new_fiche)) },
+            text = {
+                Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(client, { client = it }, label = { Text(stringResource(R.string.client)) })
+                    OutlinedTextField(date, { date = it }, label = { Text(stringResource(R.string.date)) })
+                    OutlinedTextField(site, { site = it }, label = { Text(stringResource(R.string.site)) })
+                    OutlinedTextField(wilaya, { wilaya = it }, label = { Text(stringResource(R.string.wilaya)) })
+                    OutlinedTextField(desc, { desc = it }, label = { Text(stringResource(R.string.works)) })
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    vm.addFiche(Fiche(clientName = client, date = date, siteAddress = site, wilaya = wilaya, description = desc))
+                    show = false
+                }) { Text(stringResource(R.string.add)) }
+            },
+            dismissButton = { TextButton(onClick = { show = false }) { Text(stringResource(R.string.cancel)) } }
+        )
+    }
+}
+
+@Composable
+fun HistoryScreen(vm: AppViewModel) {
+    val calcs by vm.calcs.collectAsState()
+    LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        items(calcs, key = { it.id }) { c ->
+            Card(Modifier.fillMaxWidth()) {
+                Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Column {
+                        Text("${c.powerW.toInt()}W ${if (c.threePhase) stringResource(R.string.unit_tri) else stringResource(R.string.unit_mono)} \u00b7 ${c.lengthM.toInt()}m ${c.material}", style = MaterialTheme.typography.titleSmall)
+                        Text("S=${c.sectionMm2}mm\u00b2 I=${"%.1f".format(c.currentA)}A \u0394U=${"%.2f".format(c.dropPct)}% DJ=${c.breakerA}A")
+                    }
+                    IconButton(onClick = { vm.deleteCalc(c.id) }) { Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete)) }
+                }
+            }
+        }
     }
 }

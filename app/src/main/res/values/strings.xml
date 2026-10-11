@@ -31,6 +31,8 @@
     <string name="wilaya">Wilaya</string>
     <string name="add">Ajouter</string>
     <string name="cancel">Annuler</string>
+    <string name="delete">Supprimer</string>
+    <string name="share">Partager</string>
     <string name="new_fiche">Nouvelle fiche</string>
     <string name="client">Client</string>
     <string name="date">Date</string>
