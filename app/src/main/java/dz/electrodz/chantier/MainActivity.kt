@@ -9,13 +9,14 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import dz.electrodz.chantier.ui.AppViewModel
 import dz.electrodz.chantier.ui.CalculatorScreen
 import dz.electrodz.chantier.ui.ClientsScreen
+import dz.electrodz.chantier.ui.DzTheme
 import dz.electrodz.chantier.ui.FichesScreen
 import dz.electrodz.chantier.ui.HistoryScreen
 
@@ -34,7 +36,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            DzTheme {
                 Surface { App() }
             }
         }
@@ -43,6 +45,7 @@ class MainActivity : ComponentActivity() {
 
 private data class Tab(val route: String, val label: String)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun App(vm: AppViewModel = viewModel()) {
     val nav = rememberNavController()
@@ -51,6 +54,9 @@ private fun App(vm: AppViewModel = viewModel()) {
         Tab("clients", "Clients"), Tab("history", "Historique")
     )
     Scaffold(
+        topBar = {
+            TopAppBar(title = { Text("Electrodz Chantier") })
+        },
         bottomBar = {
             NavigationBar {
                 val back by nav.currentBackStackEntryAsState()
@@ -65,7 +71,7 @@ private fun App(vm: AppViewModel = viewModel()) {
                     NavigationBarItem(
                         selected = cur == t.route,
                         onClick = { nav.navigate(t.route) { launchSingleTop = true } },
-                        icon = { Icon(icon, null) },
+                        icon = { Icon(icon, contentDescription = t.label) },
                         label = { Text(t.label) }
                     )
                 }
