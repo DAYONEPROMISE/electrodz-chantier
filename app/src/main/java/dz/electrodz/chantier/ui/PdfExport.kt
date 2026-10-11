@@ -23,8 +23,7 @@ object PdfExport {
             val title = Paint().apply { textSize = 28f; isFakeBoldText = true }
             val body = Paint().apply { textSize = 18f }
             var y = 80f
-            var first = true
-            fun line(s: String) { c.drawText(s.take(80), 48f, y, if (first) title else body); first = false; y += 34f }
+            val line: (String) -> Unit = { s -> c.drawText(s.take(80), 48f, y, if (y == 80f) title else body); y += 34f }
             line("ElectroDZ - Fiche d'intervention")
             line("Client: ${fiche.clientName}")
             line("Date: ${fiche.date}  Wilaya: ${fiche.wilaya}")
@@ -49,8 +48,9 @@ object PdfExport {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             ctx.startActivity(Intent.createChooser(share, "Partager la fiche"))
-        } catch (_: Exception) {
+        } catch (e: Exception) {
         } finally {
             doc.close()
         }
     }
+}
