@@ -70,6 +70,7 @@ fun CalculatorScreen(vm: AppViewModel) {
     var result by remember { mutableStateOf<SizingResult?>(null) }
     var error by remember { mutableStateOf("") }
     var saved by remember { mutableStateOf(false) }
+    val errInvalidFmt = stringResource(R.string.err_invalid)
 
     Column(
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
@@ -97,7 +98,7 @@ fun CalculatorScreen(vm: AppViewModel) {
                 )
                 result = ElectroEngine.sizeCable(input)
             } catch (e: Exception) {
-                error = stringResource(R.string.err_invalid, e.message ?: "")
+                error = errInvalidFmt.format(e.message ?: "")
             }
         }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.calc_btn)) }
         result?.let { r ->
