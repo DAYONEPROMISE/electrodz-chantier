@@ -2,4 +2,41 @@
 <resources>
     <string name="app_name">ElectroDZ Chantier</string>
     <string name="disclaimer">Résultats indicatifs — vérifier selon C 15-100 / IEC 60364 avant toute installation.</string>
+    <string name="calc_title">Dimensionnement de câble</string>
+    <string name="power">Puissance (W)</string>
+    <string name="length">Longueur (m)</string>
+    <string name="cos">cos φ (0.4–1)</string>
+    <string name="net">Réseau</string>
+    <string name="net_mono">Mono 220V</string>
+    <string name="net_tri">Tri 380V</string>
+    <string name="core">Âme</string>
+    <string name="mat_cu">Cuivre</string>
+    <string name="mat_al">Alu</string>
+    <string name="insul">Isolant</string>
+    <string name="usage">Usage</string>
+    <string name="use_light">Éclairage (3%)</string>
+    <string name="use_other">Autre (5%)</string>
+    <string name="calc_btn">Calculer</string>
+    <string name="err_invalid">Valeurs invalides : %1$s</string>
+    <string name="res_current">I = %1$s A</string>
+    <string name="res_section_current">Section mini (intensité) : %1$s mm²</string>
+    <string name="res_section_reco">Section recommandée : %1$s mm²</string>
+    <string name="res_drop">Chute de tension : %1$s %%</string>
+    <string name="res_breaker">Disjoncteur : %1$s A</string>
+    <string name="save_btn">Enregistrer</string>
+    <string name="saved_msg">Enregistré dans l\u2019historique</string>
+    <string name="new_client">Nouveau client</string>
+    <string name="name">Nom</string>
+    <string name="phone">Téléphone</string>
+    <string name="wilaya">Wilaya</string>
+    <string name="add">Ajouter</string>
+    <string name="cancel">Annuler</string>
+    <string name="new_fiche">Nouvelle fiche</string>
+    <string name="client">Client</string>
+    <string name="date">Date</string>
+    <string name="site">Adresse chantier</string>
+    <string name="works">Travaux réalisés</string>
+    <string name="no_client">Sans client</string>
+    <string name="unit_tri">tri</string>
+    <string name="unit_mono">mono</string>
 </resources>

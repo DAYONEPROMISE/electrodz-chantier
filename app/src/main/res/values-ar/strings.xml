@@ -2,4 +2,41 @@
 <resources>
     <string name="app_name">إلكترو ديزاد — ورشة</string>
     <string name="disclaimer">نتائج استرشادية — تحقق وفق C 15-100 / IEC 60364 قبل أي تركيب.</string>
+    <string name="calc_title">حساب مقطع الكابل</string>
+    <string name="power">الاستطاعة (واط)</string>
+    <string name="length">الطول (م)</string>
+    <string name="cos">cos φ (0.4–1)</string>
+    <string name="net">الشبكة</string>
+    <string name="net_mono">أحادي 220V</string>
+    <string name="net_tri">ثلاثي 380V</string>
+    <string name="core">النواة</string>
+    <string name="mat_cu">نحاس</string>
+    <string name="mat_al">ألمنيوم</string>
+    <string name="insul">العازل</string>
+    <string name="usage">الاستعمال</string>
+    <string name="use_light">إنارة (3٪)</string>
+    <string name="use_other">أخرى (5٪)</string>
+    <string name="calc_btn">احسب</string>
+    <string name="err_invalid">قيم غير صالحة : %1$s</string>
+    <string name="res_current">I = %1$s A</string>
+    <string name="res_section_current">المقطع الأدنى (شدة) : %1$s مم²</string>
+    <string name="res_section_reco">المقطع الموصى به : %1$s مم²</string>
+    <string name="res_drop">هبوط الجهد : %1$s %%</string>
+    <string name="res_breaker">القاطع : %1$s A</string>
+    <string name="save_btn">حفظ</string>
+    <string name="saved_msg">تم الحفظ في السجل</string>
+    <string name="new_client">زبون جديد</string>
+    <string name="name">الاسم</string>
+    <string name="phone">الهاتف</string>
+    <string name="wilaya">الولاية</string>
+    <string name="add">إضافة</string>
+    <string name="cancel">إلغاء</string>
+    <string name="new_fiche">بطاقة جديدة</string>
+    <string name="client">الزبون</string>
+    <string name="date">التاريخ</string>
+    <string name="site">عنوان الورشة</string>
+    <string name="works">الأشغال المنجزة</string>
+    <string name="no_client">بدون زبون</string>
+    <string name="unit_tri">ثلاثي</string>
+    <string name="unit_mono">أحادي</string>
 </resources>

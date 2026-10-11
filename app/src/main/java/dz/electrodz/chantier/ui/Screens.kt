@@ -75,14 +75,14 @@ fun CalculatorScreen(vm: AppViewModel) {
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Text("Dimensionnement de câble", style = MaterialTheme.typography.titleLarge)
-        OutlinedTextField(power, { power = it; saved = false }, label = { Text("Puissance (W)") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(length, { length = it; saved = false }, label = { Text("Longueur (m)") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(cos, { cos = it; saved = false }, label = { Text("cos φ (0.4–1)") }, modifier = Modifier.fillMaxWidth())
-        Text("Réseau"); ChipRow(listOf("Mono 220V", "Tri 380V"), tri, { tri = it })
-        Text("Âme"); ChipRow(listOf("Cuivre", "Alu"), mat, { mat = it })
-        Text("Isolant"); ChipRow(listOf("PVC", "XLPE"), ins, { ins = it })
-        Text("Usage"); ChipRow(listOf("Éclairage (3%)", "Autre (5%)"), use, { use = it })
+        Text(stringResource(R.string.calc_title), style = MaterialTheme.typography.titleLarge)
+        OutlinedTextField(power, { power = it; saved = false }, label = { Text(stringResource(R.string.power)) }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(length, { length = it; saved = false }, label = { Text(stringResource(R.string.length)) }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(cos, { cos = it; saved = false }, label = { Text(stringResource(R.string.cos)) }, modifier = Modifier.fillMaxWidth())
+        Text(stringResource(R.string.net)); ChipRow(listOf(stringResource(R.string.net_mono), stringResource(R.string.net_tri)), tri, { tri = it })
+        Text(stringResource(R.string.core)); ChipRow(listOf(stringResource(R.string.mat_cu), stringResource(R.string.mat_al)), mat, { mat = it })
+        Text(stringResource(R.string.insul)); ChipRow(listOf("PVC", "XLPE"), ins, { ins = it })
+        Text(stringResource(R.string.usage)); ChipRow(listOf(stringResource(R.string.use_light), stringResource(R.string.use_other)), use, { use = it })
         if (error.isNotEmpty()) Text(error, color = MaterialTheme.colorScheme.error)
         Button(onClick = {
             error = ""
@@ -99,16 +99,16 @@ fun CalculatorScreen(vm: AppViewModel) {
             } catch (e: Exception) {
                 error = "Valeurs invalides: ${e.message}"
             }
-        }, modifier = Modifier.fillMaxWidth()) { Text("Calculer") }
+        }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.calc_btn)) }
         result?.let { r ->
             Card(Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("I = ${"%.2f".format(r.currentA)} A")
+                    Text(stringResource(R.string.res_current, "%.2f".format(r.currentA)))
                     if (r.ok) {
-                        Text("Section mini (intensité) : ${r.sectionByCurrent} mm²")
-                        Text("Section recommandée : ${r.recommendedSection} mm²", style = MaterialTheme.typography.titleMedium)
-                        Text("Chute de tension : ${"%.2f".format(r.dropPct)} %")
-                        Text("Disjoncteur : ${r.breakerA} A")
+                        Text(stringResource(R.string.res_section_current, "${r.sectionByCurrent}"))
+                        Text(stringResource(R.string.res_section_reco, "${r.recommendedSection}"), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.res_drop, "%.2f".format(r.dropPct)))
+                        Text(stringResource(R.string.res_breaker, "${r.breakerA}"))
                     }
                     Text(r.note)
                     if (r.ok && !saved) {
@@ -125,129 +125,12 @@ fun CalculatorScreen(vm: AppViewModel) {
                                     dropPct = r.dropPct, breakerA = r.breakerA
                                 )
                             ) { saved = true }
-                        }) { Text("Enregistrer") }
+                        }) { Text(stringResource(R.string.save_btn)) }
                     }
-                    if (saved) Text("Enregistré dans l'historique")
+                    if (saved) Text(stringResource(R.string.saved_msg))
                 }
             }
         }
         Text(stringResource(R.string.disclaimer), style = MaterialTheme.typography.bodySmall)
-    }
-}
-
-@Composable
-fun ClientsScreen(vm: AppViewModel) {
-    val clients by vm.clients.collectAsState()
-    var show by remember { mutableStateOf(false) }
-    Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = { show = true }) { Icon(Icons.Filled.Add, null) }
-    }) { pad ->
-        LazyColumn(Modifier.fillMaxSize().padding(pad).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(clients, key = { it.id }) { c ->
-                Card(Modifier.fillMaxWidth()) {
-                    Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Column { Text(c.name, style = MaterialTheme.typography.titleMedium); Text("${c.phone} · ${c.wilaya}") }
-                        IconButton(onClick = { vm.deleteClient(c) }) { Icon(Icons.Filled.Delete, null) }
-                    }
-                }
-            }
-        }
-    }
-    if (show) {
-        var name by remember { mutableStateOf("") }
-        var phone by remember { mutableStateOf("") }
-        var wilaya by remember { mutableStateOf("") }
-        AlertDialog(
-            onDismissRequest = { show = false }, title = { Text("Nouveau client") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(name, { name = it }, label = { Text("Nom") })
-                    OutlinedTextField(phone, { phone = it }, label = { Text("Téléphone") })
-                    OutlinedTextField(wilaya, { wilaya = it }, label = { Text("Wilaya") })
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    if (name.isNotBlank()) { vm.addClient(Client(name = name, phone = phone, wilaya = wilaya)); show = false }
-                }) { Text("Ajouter") }
-            },
-            dismissButton = { TextButton(onClick = { show = false }) { Text("Annuler") } }
-        )
-    }
-}
-
-@Composable
-fun FichesScreen(vm: AppViewModel) {
-    val fiches by vm.fiches.collectAsState()
-    val ctx = LocalContext.current
-    val scope = rememberCoroutineScope()
-    var show by remember { mutableStateOf(false) }
-    Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = { show = true }) { Icon(Icons.Filled.Add, null) }
-    }) { pad ->
-        LazyColumn(Modifier.fillMaxSize().padding(pad).padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(fiches, key = { it.id }) { f ->
-                Card(Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(12.dp)) {
-                        Text(f.clientName.ifBlank { "Sans client" }, style = MaterialTheme.typography.titleMedium)
-                        Text("${f.date} · ${f.wilaya}")
-                        if (f.description.isNotBlank()) Text(f.description)
-                        Row {
-                            IconButton(onClick = {
-                                scope.launch {
-                                    val calc = if (f.calcId > 0) vm.calcById(f.calcId) else null
-                                    try { PdfExport.shareFiche(ctx, f, calc) } catch (_: Exception) { }
-                                }
-                            }) { Icon(Icons.Filled.Share, null) }
-                            IconButton(onClick = { vm.deleteFiche(f) }) { Icon(Icons.Filled.Delete, null) }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if (show) {
-        var client by remember { mutableStateOf("") }
-        var date by remember { mutableStateOf("") }
-        var site by remember { mutableStateOf("") }
-        var wilaya by remember { mutableStateOf("") }
-        var desc by remember { mutableStateOf("") }
-        AlertDialog(
-            onDismissRequest = { show = false }, title = { Text("Nouvelle fiche") },
-            text = {
-                Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(client, { client = it }, label = { Text("Client") })
-                    OutlinedTextField(date, { date = it }, label = { Text("Date") })
-                    OutlinedTextField(site, { site = it }, label = { Text("Adresse chantier") })
-                    OutlinedTextField(wilaya, { wilaya = it }, label = { Text("Wilaya") })
-                    OutlinedTextField(desc, { desc = it }, label = { Text("Travaux réalisés") })
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    vm.addFiche(Fiche(clientName = client, date = date, siteAddress = site, wilaya = wilaya, description = desc))
-                    show = false
-                }) { Text("Ajouter") }
-            },
-            dismissButton = { TextButton(onClick = { show = false }) { Text("Annuler") } }
-        )
-    }
-}
-
-@Composable
-fun HistoryScreen(vm: AppViewModel) {
-    val calcs by vm.calcs.collectAsState()
-    LazyColumn(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(calcs, key = { it.id }) { c ->
-            Card(Modifier.fillMaxWidth()) {
-                Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Column {
-                        Text("${c.powerW.toInt()}W ${if (c.threePhase) "tri" else "mono"} · ${c.lengthM.toInt()}m ${c.material}", style = MaterialTheme.typography.titleSmall)
-                        Text("S=${c.sectionMm2}mm² I=${"%.1f".format(c.currentA)}A ΔU=${"%.2f".format(c.dropPct)}% DJ=${c.breakerA}A")
-                    }
-                    IconButton(onClick = { vm.deleteCalc(c.id) }) { Icon(Icons.Filled.Delete, null) }
-                }
-            }
-        }
     }
 }
